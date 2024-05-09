@@ -8,13 +8,14 @@ var transform = require('../../transform');
 var FileRegistry = require('./file').FileRegistry;
 var variables = require('./variables');
 var electronApi = require('../../electronApi');
+var template = require('../../transform/template');
 
 module.exports = fileTransportFactory;
 
 // Shared between multiple file transport instances
 var globalRegistry = new FileRegistry();
 // 支持的配置文件名
-var configFileNames = ['.logrc', '.logrc.json']
+var configFileNames = ['.logrc', '.logrc.json'];
 
 function fileTransportFactory(electronLog, customRegistry) {
   var pathVariables = variables.getPathVariables(process.platform);
@@ -114,7 +115,7 @@ function fileTransportFactory(electronLog, customRegistry) {
    * @param {PathVariables} vars
    */
   function resolvePath(vars) {
-    getConfigs()
+    getConfigs();
     return path.join(vars.libraryDefaultDir, vars.fileName);
   }
 
@@ -204,17 +205,30 @@ function getDefaultFileName() {
   }
 }
 
-function getConfigs() {
-  const p = configFileNames.find(i => fs.existsSync(path.join(electronApi.getAppPath(), '/', i)))
-  if(p) {
+function getConfigs(message) {
+  const p = configFileNames.find(i => fs.existsSync(path.join(electronApi.getAppPath(), '/', i)));
+  if (p) {
     const {
       segmentation = false,
       maxSize = 1024 * 1024,
       filePath = null,
-      fileName = null
-    } = JSON.parse(path.join(electronApi.getAppPath(), '/', p))
+      fileName = null,
+    } = JSON.parse(path.join(electronApi.getAppPath(), '/', p));
+    // fileName: SMSC-{y}-{m}-{d}
     console.log(segmentation, maxSize, filePath, fileName);
+    if (segmentation && filePath && fileName) {
+      const existP = path.join(filePath, template.generateFileNameFromTemp(fileName, message.date));
+      // existP as D:/log/SMSC-2024-1-21
+      const files = Math.max(...fs.readdirSync(filePath, { encoding: 'utf8' }).filter(i => {
+        const pp = path.join(filePath, i);
+        return fs.lstatSync(pp).isFile() && pp.startsWith(existP + '-') && pp.endsWith('.log');
+      }).map(j => {
+        const pp = path.join(filePath, j);
+        return Number(pp.replace(existP + '-', '').replace('.log', ''));
+      }).filter(i => !Number.isNaN(i)));
+      console.log(files);
+    }
   } else {
-    console.log('read package.json')
+    console.log('read package.json');
   }
-} 
+}

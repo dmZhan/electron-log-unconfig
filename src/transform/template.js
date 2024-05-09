@@ -3,6 +3,7 @@
 module.exports = {
   concatFirstStringElements: concatFirstStringElements,
   formatDate: formatDate,
+  generateFileNameFromTemp: generateFileNameFromTemp,
   formatTimeZone: formatTimeZone,
   pad: pad,
   padString: padString,
@@ -46,6 +47,13 @@ function formatDate(template, date) {
     .replace('{ms}', pad(date.getMilliseconds(), 3))
     .replace('{z}', formatTimeZone(date.getTimezoneOffset()))
     .replace('{iso}', date.toISOString());
+}
+
+function generateFileNameFromTemp(template, date) {
+  return template
+    .replace('{y}', String(date.getFullYear()))
+    .replace('{m}', pad(date.getMonth() + 1))
+    .replace('{d}', pad(date.getDate()));
 }
 
 function formatTimeZone(minutesOffset) {
