@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>nw.js test project</title>
+</head>
+<body>
+<script>
+  var log = require('../..');
+  var App = require('nw.gui').App;
+  log.warn('Log from nw.js');
+
+  if (App.argv.indexOf('--test') !== -1) {
+    setTimeout(function () { App.quit(); }, 50);
+  }
+</script>
+</body>
+</html>
