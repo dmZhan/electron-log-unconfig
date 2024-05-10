@@ -1,10 +1,11 @@
 {
   "name": "electron-log-unconfig",
-  "version": "4.4.8",
-  "description": "Just a very simple logging module for your Electron application",
+  "version": "0.0.1",
+  "description": "A very simple logging module for your Electron application with unconfig",
   "main": "src/index.js",
   "scripts": {
     "lint": "eslint '**/*.js' --ignore-pattern '**/dist/*.js' && tsc --noEmit",
+    "lintf": "eslint '**/*.js' --ignore-pattern '**/dist/*.js' --fix",
     "test": "humile 'src/**/*spec.js'",
     "test:full": "npm run test && npm run lint && npm run test:e2e",
     "test:e2e": "humile 'e2e/**/*.spec.js' -R list",
@@ -14,7 +15,7 @@
     "ttt": "echo ${npm_config_node_version}"
   },
   "typings": "src/index.d.ts",
-  "repository": "megahertz/electron-log",
+  "repository": "dmZhan/electron-log",
   "files": [
     "!**/__specs__",
     "src/*"
@@ -31,10 +32,10 @@
     "linux",
     "desktop"
   ],
-  "author": "Alexey Prokhorov",
+  "author": "dmZhan",
   "license": "MIT",
-  "bugs": "https://github.com/megahertz/electron-log/issues",
-  "homepage": "https://github.com/megahertz/electron-log#readme",
+  "bugs": "https://github.com/dmZhan/electron-log/issues",
+  "homepage": "https://github.com/dmZhan/electron-log#readme",
   "devDependencies": {
     "@types/node": "^14.14.6",
     "electron": "*",

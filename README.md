@@ -1,208 +1,77 @@
 # electron-log
-[![Build Status](https://travis-ci.org/megahertz/electron-log.svg?branch=master)](https://travis-ci.org/megahertz/electron-log)
-[![NPM version](https://badge.fury.io/js/electron-log.svg)](https://badge.fury.io/js/electron-log)
-[![Dependencies status](https://img.shields.io/david/megahertz/electron-log)](https://david-dm.org/megahertz/electron-log)
 
-Just a simple logging module for your Electron or NW.js application.
-No dependencies. No complicated configuration. Just require and use.
-Also, it can be used without Electron in any node.js application.
+[![NPM version](https://img.shields.io/npm/v/electron-log-unconfig)](https://www.npmjs.com/packages/electron-log-unconfig)
 
-By default, it writes logs to the following locations:
+## Declare
 
- - **on Linux:** `~/.config/{app name}/logs/{process type}.log`
- - **on macOS:** `~/Library/Logs/{app name}/{process type}.log`
- - **on Windows:** `%USERPROFILE%\AppData\Roaming\{app name}\logs\{process type}.log`
+Forked from [`electron-log`](https://github.com/megahertz/electron-log/tree/v4.4.8)@4.4.8
 
-## Installation
+### changes in this fork
 
-Install with [npm](https://npmjs.org/package/electron-log):
+- You can add a `.logrc` or `.logrc.json` file in the project root directory and configure the log output method.
+- You can add a `.logrc` field to `package.json` and configure the log output method.
+- If you don't add config file or field, it works as normal `electron-log`.
 
-    npm install electron-log
-    
 ## Usage
 
-```js
-const log = require('electron-log');
-
-log.info('Hello, log');
-log.warn('Some problem appears');
+```bash
+npm install electron-log-unconfig -D
 ```
 
-### electron-log v2.x, v3.x
+And then you can add a config file named `.logrc` or `.logrc.json` to root or add a `.logrc` field to `package.json`.
 
-If you would like to upgrade to the latest version, read
-[the migration guide](docs/migration.md) and [the changelog](CHANGELOG.md).
+### Options
 
-### Log levels
+Both config file and field have samed options.
 
-electron-log supports the following log levels:
-
-    error, warn, info, verbose, debug, silly
-
-### `nodeIntegration`
-If you've got an error like `require is not defined` in a renderer process,
-read [the nodeIntegration section](docs/node-integration.md).
-
-### Transport
-
-Transport is a simple function which does some work with log message.
-By default, two transports are active: console and file. 
-
-**If you change some transport options, make sure you apply the changes both in
-main and renderer processes.**
-
-You can set transport options or use methods using:
-
-`log.transports.console.format = '{h}:{i}:{s} {text}';`
-
-`log.transports.file.getFile();`
-
-#### Console transport
-
-Just prints a log message to application console (main process) or to
-DevTools console (renderer process).
-
-##### Options
-
- - **[format](docs/format.md)**, default
-   `'%c{h}:{i}:{s}.{ms}%c › {text}'` (main),
-   `'{h}:{i}:{s}.{ms} › {text}'` (renderer)
- - **level**, default 'silly'
- - **useStyles**, use styles in the main process even if TTY isn't attached,
-   default `null`
-
-#### File transport
-
-The file transport writes log messages to a file.
-
-##### Options
-
- - **[format](docs/format.md)**, default
-   `'[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}'`
- - **level**, default 'silly'
- - **resolvePath** function sets the log path, for example
- 
-```js
-log.transports.file.resolvePath = () => path.join(APP_DATA, 'logs/main.log');
+```json
+{
+  "filePath": "D:/logs",
+  "fileName": "Test-{y}-{m}-{d}",
+  "maxSize": 100,
+  "segmentation": true
+}
 ```
 
-[Read more about file transport](docs/file.md).
+#### filePath
 
-#### IPC transport
-When logging inside renderer process, it also shows log in application
-console and vice versa. This transport can impact on performance, so
-it's disabled by default for packaged application.
+- Required: `false`
+- Type: `string`
 
-If you don't use electron-log in the main process but want to show renderer
-logs in the console, add `require('electron-log')` somewhere in the main code.
+The log output path.
 
-##### Options
+#### fileName
 
- - **level**, default 'silly'
+- Required: `false`
+- Type: `string`
 
-#### Remote transport
+File name's template. It will replace with date.
 
-Sends a JSON POST request with `LogMessage` in the body to the specified url.
+For example(Today is 2024/2/1):
 
-##### Options
-
- - **level**, default false
- - **url**, remote endpoint
-
-[Read more about remote transport](docs/remote.md).
-
-#### Disable a transport
-
-Just set level property to false, for example:
-
-```js
-log.transports.file.level = false;
-log.transports.console.level = false;
+```txt
+Test-{y}-{m}-{d}      ->  filename: Test-2024-2-1.log
+Test-{y}-{m}          ->  filename: Test-2024-2.log
+Test-{y}              ->  filename: Test-2024.log
+Test-{y}-AA{m}-BB{d}  ->  filename: Test-2024-AA2-BB1.log
 ```
 
-#### [Override/add a custom transport](docs/extend.md#transport)
+#### maxSize
 
-Transport is just a function `(msg: LogMessage) => void`, so you can
-easily override/add your own transport.
-[More info](docs/extend.md#transport).
+- Required: `false`
+- Type: `number`
+- Default: `1024`
 
-### Overriding console.log
+Single file's size. The unit ofmeasurement is magabytes.
 
-Sometimes it's helpful to use electron-log instead of default `console`. It's
-pretty easy:
+#### segmentation
 
-```js
-console.log = log.log;
-```
+- Required: `false`
+- Type: `boolean`
+- Default: `false`
 
-If you would like to override other functions like `error`, `warn` and so on:
+Whether to enable file splitting.
 
-```js
-Object.assign(console, log.functions);
-```
+## Future
 
-### Colors
-
-Colors can be used for both main and DevTools console.
-
-`log.info('%cRed text. %cGreen text', 'color: red', 'color: green')`
-
-Available colors:
- - unset (reset to default color)
- - black
- - red
- - green
- - yellow
- - blue
- - magenta
- - cyan
- - white
- 
-For DevTools console you can use other CSS properties.
-
-### [Catch errors](docs/catch.md)
-
-electron-log can catch and log unhandled errors/rejected promises:
-
-`log.catchErrors(options?)`;
-
-[More info](docs/catch.md).
-
-### [Hooks](docs/extend.md#hooks)
-
-In some situations, you may want to get more control over logging. Hook
-is a function which is called on each transport call.
-
-`(message: LogMessage, transport: Transport) => LogMessage`
-
-[More info](docs/extend.md#hooks).
-
-### Multiple logger instances
-
-You can create multiple logger instances with different settings:
-
-```js
-const electronLog = require('electron-log');
-
-const log = electronLog.create('anotherInstance');
-````
-
-### Logging scopes
-
-```js
-const log = require('electron-log');
-const userLog = log.scope('user');
-
-userLog.info('message with user scope');
-// Prints 12:12:21.962 (user) › message with user scope
-```
-
-### Web Worker
-
-It's possible to use the module with Web Worker. However, ipc transport is not
-active, so log messages from worker are not displayed in the main app console.
-
-## Related
-
- - [electron-cfg](https://github.com/megahertz/electron-cfg) -
-   Settings for your Electron application.
+Maybe i will rewrite electron-log.But for now i'm just going to add a few methods to meet my needs.
