@@ -214,7 +214,7 @@ function getDefaultFileName() {
 
 function getConfigs() {
   const p = configFileNames.find(i => {
-    return fs.existsSync(path.join(electronApi.getAppPath(), '../..', i));
+    return fs.existsSync(path.join(electronApi.getAppPath() || '', '../..', i));
   });
 
   if (p) {
@@ -223,7 +223,7 @@ function getConfigs() {
       maxSize = 1024,
       filePath = null,
       fileName = null,
-    } = JSON.parse(fs.readFileSync(path.join(electronApi.getAppPath(), '../..', p)));
+    } = JSON.parse(fs.readFileSync(path.join(electronApi.getAppPath() || '', '../..', p)));
     // fileName: SMSC-{y}-{m}-{d}
     if (segmentation && filePath && fileName) {
       const existP = path.join(filePath, template.generateFileNameFromTemp(fileName, new Date()));
@@ -255,7 +255,7 @@ function getConfigs() {
       };
     }
   } else if (electronApi.isDev()) {
-    const pkg = path.join(electronApi.getAppPath(), '../..', 'package.json');
+    const pkg = path.join(electronApi.getAppPath() || '', '../..', 'package.json');
 
     if (fs.existsSync(pkg)) {
       const {
