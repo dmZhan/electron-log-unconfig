@@ -230,22 +230,20 @@ function getConfigs() {
 
       if (fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory()) {
         // existP as D:/log/SMSC-2024-1-21
-        const num = Math.max(...fs.readdirSync(filePath, { encoding: 'utf8' }).filter(i => {
+        const nums = fs.readdirSync(filePath, { encoding: 'utf8' }).filter(i => {
           const pp = path.join(filePath, i);
           return fs.lstatSync(pp).isFile() && pp.startsWith(existP + '-') && pp.endsWith('.log');
         }).map(j => {
           const pp = path.join(filePath, j);
           return Number(pp.replace(existP + '-', '').replace('.log', ''));
-        }).filter(i => !Number.isNaN(i)));
+        }).filter(i => !Number.isNaN(i));
 
-        if (num) {
-          return {
-            prefix: existP + '-',
-            curNum: num,
-            suffix: '.log',
-            maxSize,
-          };
-        }
+        return {
+          prefix: existP + '-',
+          curNum: nums.length ? Math.max(...nums) : 1,
+          suffix: '.log',
+          maxSize,
+        };
       }
       return {
         prefix: existP + '-',
