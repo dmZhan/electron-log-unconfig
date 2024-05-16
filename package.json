@@ -1,6 +1,6 @@
 {
   "name": "electron-log-unconfig",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A very simple logging module for your Electron application with unconfig",
   "main": "src/index.js",
   "scripts": {
