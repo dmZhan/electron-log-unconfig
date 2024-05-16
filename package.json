@@ -13,7 +13,7 @@
     "ttt": "echo ${npm_config_node_version}"
   },
   "typings": "src/index.d.ts",
-  "repository": "dmZhan/electron-log",
+  "repository": "dmZhan/electron-log-unconfig",
   "files": [
     "!**/__specs__",
     "src/*"
@@ -32,8 +32,8 @@
   ],
   "author": "dmZhan",
   "license": "MIT",
-  "bugs": "https://github.com/dmZhan/electron-log/issues",
-  "homepage": "https://github.com/dmZhan/electron-log#readme",
+  "bugs": "https://github.com/dmZhan/electron-log-unconfig/issues",
+  "homepage": "https://github.com/dmZhan/electron-log-unconfig#readme",
   "devDependencies": {
     "@types/node": "^14.14.6",
     "electron": "*",
