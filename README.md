@@ -72,6 +72,24 @@ Single file's size. The unit ofmeasurement is magabytes.
 
 Whether to enable file splitting.
 
+#### prefixPkgName
+
+- Required: `false`
+- Type: `boolean`
+- Default: `false`
+
+Whether to add package name as prefix.
+
+#### countLength
+
+- Required: `false`
+- Type: `number`
+- Default: 3
+
+Default filename(if segmentation is true) is `xxx.001.log`.
+
+If set countLength to 5, filename is `xxx.00001.log`.
+
 ## Future
 
 Maybe i will rewrite electron-log.But for now i'm just going to add a few methods to meet my needs.

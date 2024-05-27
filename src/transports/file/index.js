@@ -109,10 +109,10 @@ function fileTransportFactory(electronLog, customRegistry) {
 
     var filePath = transport.resolvePath(vars, msg);
     if (typeof filePath === 'object') {
-      const p = path.resolve(filePath.prefix + filePath.curNum + filePath.suffix);
+      const p = path.resolve(filePath.prefix + resolveNumber(filePath.curNum, filePath.countLength) + filePath.suffix);
       const fileP = registry.provide(p, transport.writeOptions, !transport.sync);
       if (fileP.size >= filePath.maxSize * 1024) {
-        return registry.provide(path.resolve(filePath.prefix + (filePath.curNum + 1) + filePath.suffix), transport.writeOptions, !transport.sync);
+        return registry.provide(path.resolve(filePath.prefix + resolveNumber(filePath.curNum + 1, filePath.countLength) + filePath.suffix), transport.writeOptions, !transport.sync);
       }
       return registry.provide(p, transport.writeOptions, !transport.sync);
     }
@@ -223,10 +223,12 @@ function getConfigs() {
       maxSize = 1024,
       filePath = null,
       fileName = null,
+      prefixPkgName = false,
+      countLength = 3,
     } = JSON.parse(fs.readFileSync(path.join(electronApi.getAppPath() || '', '../..', p)));
     // fileName: SMSC-{y}-{m}-{d}
     if (segmentation && filePath && fileName) {
-      const existP = path.join(filePath, template.generateFileNameFromTemp(fileName, new Date()));
+      const existP = path.join(filePath, template.generateFileNameFromTemp(prefixPkgName ? electronApi.getName() + fileName : fileName, new Date()));
 
       if (fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory()) {
         // existP as D:/log/SMSC-2024-1-21
@@ -243,6 +245,7 @@ function getConfigs() {
           curNum: nums.length ? Math.max(...nums) : 1,
           suffix: '.log',
           maxSize,
+          countLength,
         };
       }
       return {
@@ -250,6 +253,7 @@ function getConfigs() {
         curNum: 1,
         suffix: '.log',
         maxSize,
+        countLength,
       };
     }
   } else if (electronApi.isDev()) {
@@ -262,11 +266,13 @@ function getConfigs() {
           maxSize = 1024,
           filePath = null,
           fileName = null,
+          prefixPkgName = false,
+          countLength = 3,
         } = {},
       } = JSON.parse(fs.readFileSync(pkg, 'utf8'));
 
       if (segmentation && filePath && fileName) {
-        const existP = path.join(filePath, template.generateFileNameFromTemp(fileName, new Date()));
+        const existP = path.join(filePath, template.generateFileNameFromTemp(prefixPkgName ? electronApi.getName() + fileName : fileName, new Date()));
 
         if (fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory()) {
           // existP as D:/log/SMSC-2024-1-21
@@ -284,6 +290,7 @@ function getConfigs() {
               curNum: num,
               suffix: '.log',
               maxSize,
+              countLength,
             };
           }
         }
@@ -292,9 +299,15 @@ function getConfigs() {
           curNum: 1,
           suffix: '.log',
           maxSize,
+          countLength,
         };
       }
     }
   }
   return undefined;
+}
+
+function resolveNumber(num, len) {
+  const n = Math.floor(num).toString().length;
+  return '0'.repeat(len - n);
 }
