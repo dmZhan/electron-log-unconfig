@@ -309,5 +309,5 @@ function getConfigs() {
 
 function resolveNumber(num, len) {
   const n = Math.floor(num).toString().length;
-  return '0'.repeat(len - n);
+  return '0'.repeat(len - n) + num;
 }

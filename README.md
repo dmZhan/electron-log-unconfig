@@ -29,7 +29,9 @@ Both config file and field have samed options.
   "filePath": "D:/logs",
   "fileName": "Test-{y}-{m}-{d}",
   "maxSize": 100,
-  "segmentation": true
+  "segmentation": true,
+  "prefixPkgName": false,
+  "countLength": 3
 }
 ```
 
